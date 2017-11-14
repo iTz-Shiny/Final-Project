@@ -27,23 +27,45 @@ import matplotlib.pyplot as plt
 #when
 #specific parameters have been met to keep track of current star type throughout
 #calculations.
-class Star ( mass , luminosity , radius , temperature ):
+
+class Star:
     
     def __init__ ( self , mass , luminosity , radius , temperature ):
         self.mass = mass
         self.lum = luminosity
         self.radius = radius
         self.temp = temperature
-        self.spectral = spectral()
-        self.absoMag = absoMag()
-        self.starType = categorize()
+        self.spectralClass = spectral(self)
+        self.absoMag = boloMag(self)
+        self.starType = categorize(self)
         
-    def setStar():
+    def setStar(self):
         self.type = categorize()
         
-    def setSpectral():
-        self.spectral = spectral()
+    def setSpectralClass(self):
+        self.spectralClass = spectral()
         
+    def getSpectral(self):
+        return self.spectralClass
+        
+    def getMass(self):
+        return self.mass
+    
+    def getLum(self):
+        return self.lum
+    
+    def getRadius(self):
+        return self.radius
+    
+    def getTemp(self):
+        return self.temp
+    
+    def getAbso(self):
+        return self.absoMag
+    
+    def __str__(self):
+        return 'Spectral Class: ' + str(self.spectralClass) + '\nAbsolute Magnitude: ' + str(self.absoMag) + '\nStar Type: ' + str(self.starType)
+    
 #Based on Mass, Luminosity, Radius, and Temperature. Attempt to identify
 #what category the star fits into and determine its lifetime(if not already done).
 #Then stimulate the evolution of the star. Assuming that the star is singular and
@@ -56,155 +78,158 @@ class Star ( mass , luminosity , radius , temperature ):
 # Categorizing Star in H-R Diagram
 #----------------------------------------------------------------------------#
 
-def spectral():
+def spectral(Star):
     '''
     Categorize star into it's respective stellar classification    
     '''
-    if(temp >= 30000 and mass >= 16 and radius >= 6.6 and lum >= 30,000):
+    if(Star.getTemp() >= 30000):
         return 'O'
-    elif(temp >= 10000 and mass >= 2.1 and radius >= 1.8 and lum >= 25):
+    elif(Star.getTemp() >= 10000):
         return 'B'
-    elif(temp >= 7500 and mass >= 1.4 and radius >= 1.4 and lum >= 5):
+    elif(Star.getTemp() >= 7500):
         return 'A'
-    elif(temp >= 6000 and mass >= 1.04 and radius >= 1.15 and lum >= 1.5):
+    elif(Star.getTemp() >= 6000):
         return 'F'
-    elif(temp >= 5200 and mass >= 0.8 and radius >= 0.96 and lum >= 0.6):
+    elif(Star.getTemp() >= 5200):
         return 'B'
-    elif(temp >= 3700 and mass >= 0.45 and radius >= 0.7 and lum >= 0.08):
+    elif(Star.getTemp() >= 3700):
         return 'K'
-    elif(temp >= 2400 and mass >= 0.08 and radius <= 0.7 and lum <= 0.08):
+    elif(Star.getTemp() >= 2400):
         return 'M'
-    elif(temp >= 1300 and temp <= 2000 and mass >= 0.06 and mass <= 0.08):
+    elif(Star.getTemp() >= 1300):
         return 'L'
-    elif(temp >= 550 and temp <= 1300 and mass <= 0.06):
+    elif(Star.getTemp() >= 550):
         return 'T'
     
-def absoMag():
-    solarLum = 3.828e-26
-    return -2.5*np.log10(lum*solarLum) + 71.197425
+def boloMag(Star):
+    solarLum = 3.828e26
+    return -2.5*np.log10(Star.getLum()*solarLum) + 71.197425
     
-def categorize():
+def categorize(Star):
     
     #Spectral Type O Categorization
-    if(self.spectralClass == 'O'):
-        if(absoMag >= 8 and absoMag <= 11):
-            self.starType = 'White Dwarfs'
-        elif(absoMag <= 0 and absoMag >= -4 ):
-            self.starType = 'Main Sequence'
-        elif(absoMag <= -4 and absoMag >= -5):
-            self.starType = 'Giants'
-        elif(absoMag <= -5 and absoMag >= -6):
-            self.starType = 'Bright Giants'
-        elif(absoMag <= -6 and absoMag >= -7):
-            self.starType = 'Supergiants'
-        elif(absoMag <= -7):
-            self.starType = 'Hypergiants'
+    if(Star.getSpectral() == 'O'):
+        if(Star.getAbso() >= 8 and Star.getAbso() <= 11):
+            return 'White Dwarfs'
+        elif(Star.getAbso() <= 0 and Star.getAbso() >= -4 ):
+            return 'Main Sequence'
+        elif(Star.getAbso() <= -4 and Star.getAbso() >= -5):
+            return 'Giants'
+        elif(Star.getAbso() <= -5 and Star.getAbso() >= -6):
+            return 'Bright Giants'
+        elif(Star.getAbso() <= -6 and Star.getAbso() >= -7):
+            return 'Supergiants'
+        elif(Star.getAbso() <= -7):
+            return 'Hypergiants'
        
     #Spectral Type B Categorization:
-    if(self.spectralClass == 'B'):
-        if(absoMag >= 9 and absoMag <= 13):
-            self.starType = 'White Dwarfs'
-        elif(absoMag <= 2 and absoMag >= -3 ):
-            self.starType = 'Main Sequence'
-        elif(absoMag <= -3 and absoMag >= -4):
-            self.starType = 'Giants'
-        elif(absoMag <= -4 and absoMag >= -6):
-            self.starType = 'Bright Giants'
-        elif(absoMag <= -6 and absoMag >= -7):
-            self.starType = 'Supergiants'
-        elif(absoMag <= -7):
-            self.starType = 'Hypergiants'
+    if(Star.getSpectral() == 'B'):
+        if(Star.getAbso() >= 9 and Star.getAbso() <= 13):
+            return 'White Dwarfs'
+        elif(Star.getAbso() <= 2 and Star.getAbso() >= -3 ):
+            return'Main Sequence'
+        elif(Star.getAbso() <= -3 and Star.getAbso() >= -4):
+            return 'Giants'
+        elif(Star.getAbso() <= -4 and Star.getAbso() >= -6):
+            return 'Bright Giants'
+        elif(Star.getAbso() <= -6 and Star.getAbso() >= -7):
+            return 'Supergiants'
+        elif(Star.getAbso() <= -7):
+            return 'Hypergiants'
         
     #Spectral Type A Categorization:
-    if(self.spectralClass == 'A'):
-        if(absoMag >= 10 and absoMag <= 14):
-            self.starType = 'White Dwarfs'
-        elif(absoMag < 4 and absoMag >= 2):
-            self.starType = 'Main Sequence'
-        elif(absoMag < 2 and absoMag >= 0):
-            self.starType = 'Subgiants'
-        elif(absoMag < 0 and absoMag >= -3):
-            self.starType = 'Giants'
-        elif(absoMag < -3 and absoMag >= -6):
-            self.starType = 'Bright Giants'
-        elif(absoMag < -6 and absoMag >= -7):
-            self.starType = 'Supergiants'
-        elif(absoMag < -7):
-            self.starType = 'Hypergiants'
+    if(Star.getSpectral() == 'A'):
+        if(Star.getAbso() >= 10 and Star.getAbso() <= 14):
+            return 'White Dwarfs'
+        elif(Star.getAbso() < 4 and Star.getAbso() >= 2):
+            return 'Main Sequence'
+        elif(Star.getAbso() < 2 and Star.getAbso() >= 0):
+            return 'Subgiants'
+        elif(Star.getAbso() < 0 and Star.getAbso() >= -3):
+            return 'Giants'
+        elif(Star.getAbso() < -3 and Star.getAbso() >= -6):
+            return 'Bright Giants'
+        elif(Star.getAbso() < -6 and Star.getAbso() >= -7):
+            return 'Supergiants'
+        elif(Star.getAbso() < -7):
+            return 'Hypergiants'
 
     #Spectral Type F Categorization:
-    if(self.spectralClass == 'F'):
-        if(absoMag >= 13 and absoMag <= 15):
-            self.starType = 'White Dwarfs'
-        elif(absoMag < 5 and absoMag >= 2 ):
-            self.starType = 'Main Sequence'
-        elif(absoMag < 2 and absoMag >= 1 ):
-            self.starType = 'Subgiant'
-        elif(absoMag < 1 and absoMag >= -1):
-            self.starType = 'Giants'
-        elif(absoMag < -1 and absoMag >= -4):
-            self.starType = 'Bright Giants'
-        elif(absoMag < -4 and absoMag >= -6):
-            self.starType = 'Supergiants'
-        elif(absoMag < -6):
-            self.starType = 'Hypergiants'
+    if(Star.getSpectral() == 'F'):
+        if(Star.getAbso() >= 13 and Star.getAbso() <= 15):
+            return 'White Dwarfs'
+        elif(Star.getAbso() < 5 and Star.getAbso() >= 2 ):
+            return 'Main Sequence'
+        elif(Star.getAbso() < 2 and Star.getAbso() >= 1 ):
+            return 'Subgiant'
+        elif(Star.getAbso() < 1 and Star.getAbso() >= -1):
+            return 'Giants'
+        elif(Star.getAbso() < -1 and Star.getAbso() >= -4):
+            return 'Bright Giants'
+        elif(Star.getAbso() < -4 and Star.getAbso() >= -6):
+            return 'Supergiants'
+        elif(Star.getAbso() < -6):
+            return 'Hypergiants'
     
     #Spectral Type G Categorization:
-    if(self.spectralClass == 'G'):
-        if(absoMag >= 14 and absoMag <= 16):
-            self.starType = 'White Dwarfs'
-        elif(absoMag < 8 and absoMag >= 4 ):
-            self.starType = 'Main Sequence'
-        elif(absoMag < 4 and absoMag >= 2 ):
-            self.starType = 'Subgiant'
-        elif(absoMag < 2 and absoMag >= -1):
-            self.starType = 'Giants'
-        elif(absoMag < -1 and absoMag >= -3.5):
-            self.starType = 'Bright Giants'
-        elif(absoMag < -3.5 and absoMag >= -6):
-            self.starType = 'Supergiants'
-        elif(absoMag < -6):
-            self.starType = 'Hypergiants'
+    if(Star.getSpectral() == 'G'):
+        if(Star.getAbso() >= 14 and Star.getAbso() <= 16):
+            return 'White Dwarfs'
+        elif(Star.getAbso() < 8 and Star.getAbso() >= 4 ):
+            return 'Main Sequence'
+        elif(Star.getAbso() < 4 and Star.getAbso() >= 2 ):
+            return 'Subgiant'
+        elif(Star.getAbso() < 2 and Star.getAbso() >= -1):
+            return 'Giants'
+        elif(Star.getAbso() < -1 and Star.getAbso() >= -3.5):
+            return 'Bright Giants'
+        elif(Star.getAbso() < -3.5 and Star.getAbso() >= -6):
+            return 'Supergiants'
+        elif(Star.getAbso() < -6):
+            return 'Hypergiants'
 
     #Spectral Type K Categorization:
-    if(self.spectralClass == 'K'):
-        if(absoMag >= 14 and absoMag <= 17):
-            self.starType = 'White Dwarfs'
-        elif(absoMag < 11 and absoMag >= 4 ):
-            self.starType = 'Main Sequence'
-        elif(absoMag < 4 and absoMag >= 2 ):
-            self.starType = 'Subgiant'
-        elif(absoMag < 2 and absoMag >= -1):
-            self.starType = 'Giants'
-        elif(absoMag < -1 and absoMag >= -3.5):
-            self.starType = 'Bright Giants'
-        elif(absoMag < -3.5 and absoMag >= -6):
-            self.starType = 'Supergiants'
-        elif(absoMag < -6):
-            self.starType = 'Hypergiants'
+    if(Star.getSpectral() == 'K'):
+        if(Star.getAbso() >= 14 and Star.getAbso() <= 17):
+            return 'White Dwarfs'
+        elif(Star.getAbso() < 11 and Star.getAbso() >= 4 ):
+            return 'Main Sequence'
+        elif(Star.getAbso() < 4 and Star.getAbso() >= 2 ):
+            return 'Subgiant'
+        elif(Star.getAbso() < 2 and Star.getAbso() >= -1):
+            return 'Giants'
+        elif(Star.getAbso() < -1 and Star.getAbso() >= -3.5):
+            return 'Bright Giants'
+        elif(Star.getAbso() < -3.5 and Star.getAbso() >= -6):
+            return 'Supergiants'
+        elif(Star.getAbso() < -6):
+            return 'Hypergiants'
 
     #Spectral Type M Categorization:
-    if(self.spectralClass == 'M'):
-        if(absoMag <= 19 and absoMag >= 5 ):
-            self.starType = 'Main Sequence'
-        elif(absoMag < 2 and absoMag >= -2):
-            self.starType = 'Giants'
-        elif(absoMag < -2 and absoMag >= -3.5):
-            self.starType = 'Bright Giants'
-        elif(absoMag < -3.5 and absoMag >= -6):
-            self.starType = 'Supergiants'
-        elif(absoMag < -6):
-            self.starType = 'Hypergiants'
+    if(Star.getSpectral() == 'M'):
+        if(Star.getAbso() <= 19 and Star.getAbso() >= 5 ):
+            return 'Main Sequence'
+        elif(Star.getAbso() < 2 and Star.getAbso() >= -2):
+            return 'Giants'
+        elif(Star.getAbso() < -2 and Star.getAbso() >= -3.5):
+            return 'Bright Giants'
+        elif(Star.getAbso() < -3.5 and Star.getAbso() >= -6):
+            return 'Supergiants'
+        elif(Star.getAbso() < -6):
+            return 'Hypergiants'
 
     #Spectral Type L & T:
-    if(self.spectralClass == 'L' or self.spectralClass = 'T'):
-        if(self.mass < 0.075):
-            self.starType = 'Brown Dwarf'
+    if(Star.getSpectral() == 'L' or Star.getSpectral() == 'T'):
+        if(Star.getMass() < 0.075):
+            return 'Brown Dwarf'
         else:
-            self.starType = 'Red Dwarf'
+            return 'Red Dwarf'
     
-    
-    
+#----------------------------------------------------------------------------#
+
+star1 = Star(20,20,20,7000)
+print(star1)
+
     
     
     
