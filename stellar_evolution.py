@@ -35,8 +35,8 @@ class Star ( mass , luminosity , radius , temperature ):
         self.radius = radius
         self.temp = temperature
         self.spectral = spectral()
-        self.absoMag = absoMag(lum)
-        self.starType = catergorize()
+        self.absoMag = absoMag()
+        self.starType = categorize()
         
     def setStar():
         self.type = categorize()
@@ -79,7 +79,7 @@ def spectral():
     elif(temp >= 550 and temp <= 1300 and mass <= 0.06):
         return 'T'
     
-def absoMag(lum):
+def absoMag():
     solarLum = 3.828e-26
     return -2.5*np.log10(lum*solarLum) + 71.197425
     
