@@ -39,13 +39,6 @@ def lum(Mass):
     else:
         return 3200*Mass
     
-#Lifetime of a Main Sequence Star in years
-def lifetime(Mass):
-    '''
-    Returns the lifetime of a main sequence star based on it's relation
-    to mass.
-    '''
-    return 100*Mass**-2.5
 
 #------------------------------------------------------#
 # Rate of Energy Spent
@@ -61,20 +54,16 @@ def lifetime(Mass):
 #nucleus and the mass loss is 0.7% or 0.029amu. This is the rate of mass loss per Helium-4
 #creation. Utilzing E=mc^2 with this data, and the mass of Hydrogen in the core
 #where the reaction happens in main-sequence stars which is usually 10% of the mass of
-#the star. You can find the total Energy possible for the star to produce
+#the star. You can find the total Energy possible for the star to estimate the lifetime.
 
-#In AMU measurements
-proton = 1.008
-helium4 = 4.003
-massLoss = 0.029
-amu = 1.7e-27
+#Lifetime of a Main Sequence Star in years
+def lifetime(Mass):
+    '''
+    Returns the lifetime of a main sequence star based on it's relation
+    to mass.
+    '''
+    return (10*10)*Mass**-2.5
 
-heliumE = (massLoss*amu)*(3e8)**2 #E=mc^2
 
-def energyPerS(lum): #Rate of Energy Lost
-    return (lum*3.828e26) / heliumE
-
-def totalEnergy(ener): #Total Energy based on how mcuh Hydrogen remains
-    return 0
 
 

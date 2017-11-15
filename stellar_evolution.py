@@ -123,7 +123,7 @@ def categorize(Star):
             return 'Hypergiants'
        
     #Spectral Type B Categorization:
-    if(Star.getSpectral() == 'B'):
+    elif(Star.getSpectral() == 'B'):
         if(Star.getAbso() >= 9 and Star.getAbso() <= 13):
             return 'White Dwarfs'
         elif(Star.getAbso() <= 2 and Star.getAbso() >= -3 ):
@@ -138,7 +138,7 @@ def categorize(Star):
             return 'Hypergiants'
         
     #Spectral Type A Categorization:
-    if(Star.getSpectral() == 'A'):
+    elif(Star.getSpectral() == 'A'):
         if(Star.getAbso() >= 10 and Star.getAbso() <= 14):
             return 'White Dwarfs'
         elif(Star.getAbso() < 4 and Star.getAbso() >= 2):
@@ -155,7 +155,7 @@ def categorize(Star):
             return 'Hypergiants'
 
     #Spectral Type F Categorization:
-    if(Star.getSpectral() == 'F'):
+    elif(Star.getSpectral() == 'F'):
         if(Star.getAbso() >= 13 and Star.getAbso() <= 15):
             return 'White Dwarfs'
         elif(Star.getAbso() < 5 and Star.getAbso() >= 2 ):
@@ -172,7 +172,7 @@ def categorize(Star):
             return 'Hypergiants'
     
     #Spectral Type G Categorization:
-    if(Star.getSpectral() == 'G'):
+    elif(Star.getSpectral() == 'G'):
         if(Star.getAbso() >= 14 and Star.getAbso() <= 16):
             return 'White Dwarfs'
         elif(Star.getAbso() < 8 and Star.getAbso() >= 4 ):
@@ -189,7 +189,7 @@ def categorize(Star):
             return 'Hypergiants'
 
     #Spectral Type K Categorization:
-    if(Star.getSpectral() == 'K'):
+    elif(Star.getSpectral() == 'K'):
         if(Star.getAbso() >= 14 and Star.getAbso() <= 17):
             return 'White Dwarfs'
         elif(Star.getAbso() < 11 and Star.getAbso() >= 4 ):
@@ -206,7 +206,7 @@ def categorize(Star):
             return 'Hypergiants'
 
     #Spectral Type M Categorization:
-    if(Star.getSpectral() == 'M'):
+    elif(Star.getSpectral() == 'M'):
         if(Star.getAbso() <= 19 and Star.getAbso() >= 5 ):
             return 'Main Sequence'
         elif(Star.getAbso() < 2 and Star.getAbso() >= -2):
@@ -219,16 +219,25 @@ def categorize(Star):
             return 'Hypergiants'
 
     #Spectral Type L & T:
-    if(Star.getSpectral() == 'L' or Star.getSpectral() == 'T'):
+    elif(Star.getSpectral() == 'L' or Star.getSpectral() == 'T'):
         if(Star.getMass() < 0.075):
             return 'Brown Dwarf'
         else:
             return 'Red Dwarf'
     
+    #Otherwise, the star either hasn't been found in nature or is dead
+    else:
+        return 'Black Dwarf'
+
 #----------------------------------------------------------------------------#
 
-star1 = Star(20,20,20,7000)
-print(star1)
+randMass = np.random.randint(0.01,100) #Biggest Star Known's estimated Mass
+randRadius = np.random.randint(0.01,200)
+randLumonsity = np.random.randint(0.01,50000)
+randTemp = np.random.randint(0.01,32000)
+
+randomStar = Star(randMass,randLumonsity,randRadius,randTemp)
+print(randomStar)
 
     
     
