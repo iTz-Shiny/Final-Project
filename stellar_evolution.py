@@ -7,6 +7,7 @@ Created on Mon Nov  6 02:56:18 2017
 
 import numpy as np
 import matplotlib.pyplot as plt
+import main_sequence
 
 #12 Types of Stars:
 '''
@@ -21,7 +22,7 @@ import matplotlib.pyplot as plt
     Red - dwarfs
     Brown - dwarfs
     White - dwarfs
-    Black - dwarfs ( Dead Star)
+    Black - dwarfs (Dead Star)
 '''
 #Possibly will have multiple classes of stars and change them to specific classes
 #when
@@ -219,19 +220,21 @@ def categorize(Star):
             return 'Hypergiants'
 
     #Spectral Type L & T:
-    elif(Star.getSpectral() == 'L' or Star.getSpectral() == 'T'):
+    elif((Star.getSpectral() == 'L' or Star.getSpectral() == 'T') and Star.getAbso() >= 10):
         if(Star.getMass() < 0.075):
             return 'Brown Dwarf'
-        else:
+        elif(Star.getMass() < 0.50):
             return 'Red Dwarf'
     
     #Otherwise, the star either hasn't been found in nature or is dead
     else:
         return 'Black Dwarf'
 
-#----------------------------------------------------------------------------#
+#=============================================================================#
+# Random Generation
+#=============================================================================#
 
-randMass = np.random.randint(0.01,100) #Biggest Star Known's estimated Mass
+randMass = np.random.randint(0.01,100) 
 randRadius = np.random.randint(0.01,200)
 randLumonsity = np.random.randint(0.01,50000)
 randTemp = np.random.randint(0.01,32000)
@@ -239,7 +242,29 @@ randTemp = np.random.randint(0.01,32000)
 randomStar = Star(randMass,randLumonsity,randRadius,randTemp)
 print(randomStar)
 
+#=============================================================================#
+# Simulation
+#=============================================================================#
+
+#Setup
+N = 50 #Number of Time Slices
+
+lifeTime = main_sequence.lifetime(randMass)
+time_space = np.linspace(lifeTime,0,N)
+star_space = []
+
+star_space.append(randomStar)
+
+#Equations
+def dT(Star):
+    return Star.get
+
+
+#Loop
+
+for n in range(1,N-2):
     
+    nthTime = time_space[n]
     
     
     
