@@ -234,7 +234,7 @@ def categorize(Star):
 # Random Generation
 #=============================================================================#
 
-randMass = np.random.randint(0.01,100) 
+randMass = np.random.randint(0.01,10) 
 randRadius = np.random.randint(0.01,200)
 randLumonsity = np.random.randint(0.01,50000)
 randTemp = np.random.randint(0.01,32000)
@@ -246,30 +246,122 @@ print(randomStar)
 # Simulation
 #=============================================================================#
 
-#Setup
-N = 50 #Number of Time Slices
+#phi(M) = 0.060(M**-2.35) Salpeter Function
+#Integral from 0.1 to 120 is 0.994918
 
-lifeTime = main_sequence.lifetime(randMass)
-time_space = np.linspace(lifeTime,0,N)
-star_space = []
+norm = 1./(0.994918)
 
-star_space.append(randomStar)
+randMass = np.random.uniform(size=1)
+randMass = -np.log(1-randMass/norm)
 
-#Equations
-def dT(Star):
-    return Star.get
+#Constants
+G = 6.67408e-11 #Gravitational Constant
+Msolar = 1.99e33 #Solar Mass
+Rsolar = 6957e5 #Solar Radius
+m = 0.84e-27 
+mu = 0.5  #Completely Hydrogen, Mean Molecular Weight
+
+#=============================================================================#
+# Solving Lane-Emden Equation
+#=============================================================================#
+
+#From n = 0 to 4 by increments of 1, since 5 goes to infinity
+laneSolutions = False #Set to false to do n=1.5
+
+if(laneSolutions):
+    nArray = [0.,1.,2.,3.,4.]
+else:
+    nArray = [1.5]
+
+for n in nArray:
+
+    #Boundary Conditions
+    theta = 1. #Dimensionless Scaling Length
+    dthetadxi = 0. 
+    density_c = 1
+    
+    #Setup
+    xi = 0.0 #Dimensionless Radius
+    dxi = 0.000001 #Time Step, lower the more accurate it is
+    
+    #Arrays
+    thetaArray = []
+    thetaArray.append(theta)
+    dThetaArray = []
+    dThetaArray.append(dthetadxi)
+    xiArray = []
+    xiArray.append(xi)
+    
+    #Loop until Scaling Length goes below time-step. (Roughly right before it
+    # becomes negative)
+    while theta > dxi:
+        if(xi == 0):
+            dthetadxi -= (theta**n * dxi)
+        else:
+            dthetadxi -= ( 2 * dthetadxi/xi + theta**n) * dxi 
+        theta += dthetadxi * dxi
+        xi += dxi
+        
+        thetaArray.append(theta)
+        dThetaArray.append(dthetadxi)
+        xiArray.append(xi)
+        
+        
+    #Results
+    print('\n--------------------','\nxi_1:',xi)
+    print('dTheta/dXi_1:',dthetadxi)
+    
+    xi_1 = xi
+    dthetadxi_1 = dthetadxi
+    
+    #Plot
+    plt.plot(xiArray,thetaArray,label='N = %s' % n)
+    plt.xlabel('Dimensionless Length')
+    plt.ylabel('Dimensionless Radius')
+
+plt.title('Lane-Emden Solution')
+plt.legend(loc='best')
+plt.show()
+
+#=============================================================================#
+# Finding K
+#=============================================================================#
+
+K = abs(((-2)**(2/3) * np.pi**(1/3) * G * randMass**(2/3) * density_c**(1/3)*(1-(3/n)))\
+        /   ((-xi_1**2 * dthetadxi_1)**(2/3) * (n**3 + 3*n**2 + 3*n + 1)**(1/3)))
+
+#K = ((4*np.pi)**(1/n) / (n+1)) * -(xi_1**2 * dthetadxi_1)**((1-n)/n) * xi_1**((n-3)/n)\
+#    * G * randMass**((n-1)/n) * starRadius**((3-n)/n)
+
+#K = - ((G(4*np.pi)**(1/n)) * (xi_1**((n+1)/(1-n))) * randMass**((n-1)/n) \
+#      * starRadius**((3/n)-1) * (dthetadxi_1 * (xi_1**((n+1)/(1-n))))**(1/n)) \
+#       / (dthetadxi_1 * (n+1))
+
+print('K:',K)
+
+#=============================================================================#
+# Solving Avg Density
+#=============================================================================#
+
+avg_density = (-3/xi_1) * (dthetadxi_1) * (density_c)
+print(avg_density)
+
+alpha = (((n+1)/(4*np.pi*G)) * K * density_c**(1/(n-1)))**0.5
+
+def radius(xi):
+    return xi * alpha
+
+starRadius = ((n+1)/(4*np.pi*G))**0.5 * K**(0.5) * density_c**((1-n)/(2*n)) * xi_1
+             
+r_n2 = (starRadius/xi_1)**2
+pressure_c = 4 * np.pi * density_c * G * r_n2
+
+print('Mass:',randMass)
+print('Radius:',abs(starRadius))
+
+#=============================================================================#
+# Getting the remainder of the physical properties
+#=============================================================================#
 
 
-#Loop
 
-for n in range(1,N-2):
-    
-    nthTime = time_space[n]
-    
-    
-    
-    
-    
-    
-    
-    
