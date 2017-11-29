@@ -246,20 +246,25 @@ print(randomStar)
 # Simulation
 #=============================================================================#
 
-#phi(M) = 0.060(M**-2.35) Salpeter Function
-#Integral from 0.1 to 120 is 0.994918
-
-norm = 1./(0.994918)
-
-randMass = np.random.uniform(size=1)
-randMass = -np.log(1-randMass/norm)
-
 #Constants
 G = 6.67408e-11 #Gravitational Constant
 Msolar = 1.99e33 #Solar Mass
 Rsolar = 6957e5 #Solar Radius
-m = 0.84e-27 
-mu = 0.5  #Completely Hydrogen, Mean Molecular Weight
+Lsolar = 3.842e26 #Solar Luminosity in Watts
+tSun = 4.6e9 #Time of sun
+m = 0.84e-27 #Half a proton mass
+mu = 0.62  #Mean Molecular Weight (70% Hydrogen, 28% Helium, 2% Other) Ionized
+k = 1.38064852e-23
+
+
+#phi(M) = 0.060(M**-2.35) Salpeter Function
+#Integral from 0.1 to 120 is 0.994918
+norm = 1./(0.994918)
+
+randMass = np.random.uniform(size=1)
+randMass = -np.log(1-randMass/norm)
+randMass = randMass*Msolar #Making it in Kg
+
 
 #=============================================================================#
 # Solving Lane-Emden Equation
@@ -275,10 +280,9 @@ else:
 
 for n in nArray:
 
-    #Boundary Conditions
+    #Boundary Conditions/Initial Values
     theta = 1. #Dimensionless Scaling Length
     dthetadxi = 0. 
-    density_c = 1
     
     #Setup
     xi = 0.0 #Dimensionless Radius
@@ -327,15 +331,10 @@ plt.show()
 # Finding K
 #=============================================================================#
 
+density_c = 1 #Placeholder for Central Density
+
 K = abs(((-2)**(2/3) * np.pi**(1/3) * G * randMass**(2/3) * density_c**(1/3)*(1-(3/n)))\
         /   ((-xi_1**2 * dthetadxi_1)**(2/3) * (n**3 + 3*n**2 + 3*n + 1)**(1/3)))
-
-#K = ((4*np.pi)**(1/n) / (n+1)) * -(xi_1**2 * dthetadxi_1)**((1-n)/n) * xi_1**((n-3)/n)\
-#    * G * randMass**((n-1)/n) * starRadius**((3-n)/n)
-
-#K = - ((G(4*np.pi)**(1/n)) * (xi_1**((n+1)/(1-n))) * randMass**((n-1)/n) \
-#      * starRadius**((3/n)-1) * (dthetadxi_1 * (xi_1**((n+1)/(1-n))))**(1/n)) \
-#       / (dthetadxi_1 * (n+1))
 
 print('K:',K)
 
@@ -344,17 +343,24 @@ print('K:',K)
 #=============================================================================#
 
 avg_density = (-3/xi_1) * (dthetadxi_1) * (density_c)
-print(avg_density)
+print('Avg Density:',avg_density)
+
+densityProp = density_c/avg_density
+print('Proportion between Central Density & Avg. Density:', densityProp)
 
 alpha = (((n+1)/(4*np.pi*G)) * K * density_c**(1/(n-1)))**0.5
 
-def radius(xi):
-    return xi * alpha
-
-starRadius = ((n+1)/(4*np.pi*G))**0.5 * K**(0.5) * density_c**((1-n)/(2*n)) * xi_1
+#In Solar Radius
+def radius(density_c):
+    return ((n+1)/(4*np.pi*G))**0.5 * K**(0.5) * density_c**((1-n)/(2*n)) * xi_1 
              
-r_n2 = (starRadius/xi_1)**2
+starRadius = radius(density_c)
+             
+r_n2 = np.sqrt(starRadius/xi_1)
 pressure_c = 4 * np.pi * density_c * G * r_n2
+pressure_c2 = K * density_c**(1+(1/n))
+pressure_c3 = (G*randMass*avg_density)/starRadius
+
 
 print('Mass:',randMass)
 print('Radius:',abs(starRadius))
@@ -362,6 +368,49 @@ print('Radius:',abs(starRadius))
 #=============================================================================#
 # Getting the remainder of the physical properties
 #=============================================================================#
+
+def temp():
+    return ((pressure_c3 * mu*m * (K**n) * (k / (mu*m))**(-n))/k)**(1/(n+1))
+
+initialTemp = temp()
+print('Mass:', initialTemp)
+
+#=============================================================================#
+# Time Dependent Variable Luminosity
+#=============================================================================#
+
+Q = 6.0e14 #Rate Energy that is released in J/kg 
+psi = 15/2
+
+def L(t,mass):
+    return (initialTemp) * (1 - (5/4)*(psi + 1)*((mu * initialTemp)/(mass * Q))*t)\
+    **(psi/(psi+1))
+
+#=============================================================================#
+# Creation of First Star and all it's physical properties
+#=============================================================================#
+
+starZero = Star(randMass,L(0,randMass),starRadius,temp())
+starArray = []
+starArray.append(starZero)
+
+#=============================================================================#
+# Simulation
+#=============================================================================#
+
+N = 20 #Number of Time Slices
+time_space = np.linspace(1,15e9,N) #Time from 1 Year to 15 Billion Years
+
+for t in time_space:
+    
+
+
+
+
+
+
+
+
 
 
 
