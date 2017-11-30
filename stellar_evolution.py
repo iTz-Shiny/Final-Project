@@ -234,13 +234,13 @@ def categorize(Star):
 # Random Generation
 #=============================================================================#
 
-randMass = np.random.randint(0.01,10) 
-randRadius = np.random.randint(0.01,200)
-randLumonsity = np.random.randint(0.01,50000)
-randTemp = np.random.randint(0.01,32000)
+#randMass = np.random.randint(0.01,10) 
+#randRadius = np.random.randint(0.01,200)
+#randLumonsity = np.random.randint(0.01,50000)
+#randTemp = np.random.randint(0.01,32000)
 
-randomStar = Star(randMass,randLumonsity,randRadius,randTemp)
-print(randomStar)
+#randomStar = Star(randMass,randLumonsity,randRadius,randTemp)
+#print(randomStar)
 
 #=============================================================================#
 # Simulation
@@ -248,8 +248,8 @@ print(randomStar)
 
 #Constants
 G = 6.67408e-11 #Gravitational Constant
-Msolar = 1.99e33 #Solar Mass
-Rsolar = 6957e5 #Solar Radius
+Msolar = 1.99e30 #Solar Mass in kg
+Rsolar = 6.957e8 #Solar Radius, in m
 Lsolar = 3.842e26 #Solar Luminosity in Watts
 tSun = 4.6e9 #Time of sun
 m = 0.84e-27 #Half a proton mass
@@ -264,6 +264,8 @@ norm = 1./(0.994918)
 randMass = np.random.uniform(size=1)
 randMass = -np.log(1-randMass/norm)
 randMass = randMass*Msolar #Making it in Kg
+
+#Modeling after the Sun
 
 
 #=============================================================================#
@@ -331,10 +333,17 @@ plt.show()
 # Finding K
 #=============================================================================#
 
-density_c = 1 #Placeholder for Central Density
+#density_c = 1.622e5 #Central Density of the Sun that satifies polytrope relation
+#between density and pressure
 
-K = abs(((-2)**(2/3) * np.pi**(1/3) * G * randMass**(2/3) * density_c**(1/3)*(1-(3/n)))\
-        /   ((-xi_1**2 * dthetadxi_1)**(2/3) * (n**3 + 3*n**2 + 3*n + 1)**(1/3)))
+#Nn = (((4*np.pi)**(1/n))*(n+1))*(-xi_1 ** dthetadxi_1)**((1-n)/n) * (xi_1)**((n-3)/n)
+
+#K = Nn * G * Msolar**((n-1)/n) * Rsolar**((3-n)/n)
+
+K = (Msolar**((n-1)/n)*Rsolar**((3-n)/n))/n
+
+#K = abs(((-2)**(2/3) * np.pi**(1/3) * G * randMass**(2/3) * density_c**(1/3)*(1-(3/n)))\
+#        /   ((-xi_1**2 * dthetadxi_1)**(2/3) * (n**3 + 3*n**2 + 3*n + 1)**(1/3)))
 
 print('K:',K)
 
@@ -342,7 +351,11 @@ print('K:',K)
 # Solving Avg Density
 #=============================================================================#
 
-avg_density = (-3/xi_1) * (dthetadxi_1) * (density_c)
+avg_density = Msolar/(((4/3)*np.pi)*Rsolar**3) #Kg/m^3
+
+density_c = avg_density / ((3*(xi_1 ** dthetadxi_1))/(xi_1**3))
+
+#avg_density = (-3/xi_1) * (dthetadxi_1) * (density_c)
 print('Avg Density:',avg_density)
 
 densityProp = density_c/avg_density
@@ -359,11 +372,11 @@ starRadius = radius(density_c)
 r_n2 = np.sqrt(starRadius/xi_1)
 pressure_c = 4 * np.pi * density_c * G * r_n2
 pressure_c2 = K * density_c**(1+(1/n))
-pressure_c3 = (G*randMass*avg_density)/starRadius
+pressure_c3 = (G*Msolar*avg_density)/Rsolar
 
 
-print('Mass:',randMass)
-print('Radius:',abs(starRadius))
+print('Mass:', Msolar)
+print('Radius:',abs(Rsolar))
 
 #=============================================================================#
 # Getting the remainder of the physical properties
@@ -373,7 +386,7 @@ def temp():
     return ((pressure_c3 * mu*m * (K**n) * (k / (mu*m))**(-n))/k)**(1/(n+1))
 
 initialTemp = temp()
-print('Mass:', initialTemp)
+print('Temperature:', initialTemp)
 
 #=============================================================================#
 # Time Dependent Variable Luminosity
@@ -401,7 +414,7 @@ starArray.append(starZero)
 N = 20 #Number of Time Slices
 time_space = np.linspace(1,15e9,N) #Time from 1 Year to 15 Billion Years
 
-for t in time_space:
+#for t in time_space:
     
 
 
