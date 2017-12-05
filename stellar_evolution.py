@@ -233,7 +233,7 @@ def categorize(Star):
 # Random Generation
 #=============================================================================#
 
-#randMass = np.random.randint(0.01,10) 
+#randMass = np.random.randint(0.01,10)
 #randRadius = np.random.randint(0.01,200)
 #randLumonsity = np.random.randint(0.01,50000)
 #randTemp = np.random.randint(0.01,32000)
@@ -286,11 +286,11 @@ for n in nArray:
 
     #Boundary Conditions/Initial Values
     theta = 1. #Dimensionless Scaling Length
-    dthetadxi = 0. 
+    dthetadxi = 0.
     
     #Setup
     xi = 0.0 #Dimensionless Radius
-    dxi = 0.000001 #Time Step, lower the more accurate it is
+    dxi = 0.001 #Time Step, lower the more accurate it is
     
     #Arrays
     thetaArray = []
@@ -306,7 +306,7 @@ for n in nArray:
         if(xi == 0):
             dthetadxi -= (theta**n * dxi)
         else:
-            dthetadxi -= ( 2 * dthetadxi/xi + theta**n) * dxi 
+            dthetadxi -= ( 2 * dthetadxi/xi + theta**n) * dxi
         theta += dthetadxi * dxi
         xi += dxi
         
@@ -345,8 +345,8 @@ plt.show()
 #K = (Msolar**((n-1)/n)*Rsolar**((3-n)/n))/n
 
 def kConstant(mass,density):
-    k = (((-2)**(2/3) * np.pi**(1/3) * G * mass**(2/3) * density_c**(1/3)*(1-(3/n)))\
-        /   ((-xi_1**2 * dthetadxi_1)**(2/3) * (n**3 + 3*n**2 + 3*n + 1)**(1/3)))
+    k = (-((2) * (-2*np.pi)**(1/3) * G * mass**(2/3) * density_c**((1/3)*(1-(3/n))))\
+        /   (dthetadxi_1**(2/3) * (n**3 + 3*n**2 + 3*n + 1)**(1/3) * xi_1**(4/3)))
     return abs(k)
     
 K = kConstant(randMass,density_c)
@@ -374,7 +374,7 @@ print('Proportion between Central Density & Avg. Density:', densityProp)
 
 #In Solar Radius
 def radius(density_c):
-    return ((n+1)/(4*np.pi*G))**0.5 * K**(0.5) * density_c**((1-n)/(2*n)) * xi_1 
+    return ((n+1)/(4*np.pi*G))**0.5 * K**(0.5) * density_c**((1-n)/(2*n)) * xi_1
              
 starRadius = radius(density_c)
              
@@ -411,23 +411,28 @@ print('Luminosity:', initialLum)
 # Time Dependent Variable Luminosity
 #=============================================================================#
 
-Q = 6.0e14 #Rate Energy that is released in J/kg 
+Q = 6.0e14 #Rate Energy that is released in J/kg
 psi = 15/2
 
 #Derived Lumonistiy function with respect to time
 def L(t,mass):
-    return (initialTemp) * (1 - (5/4)*(psi + 1)*((mu * initialTemp)/(mass * Q))*t)\
-    **(psi/(psi+1))
+    l = (initialLum) * (1 - (5/4)*(psi + 1)*((mu * initialLum)/(mass * Q))*t)\
+    **((-psi)/(psi+1))
+    return abs(l)
 
 def massFromLum(lum, time):
-    return (5 * lum * (psi + 1) * time * mu *(lum/initialTemp)**(1/psi)) / (4 * Q \
-           * ((lum/initialTemp)**(1/psi) + lum*initialTemp))
+    if(((lum * (lum / initialLum)**(1/psi)) - initialLum) == 0):
+        mass = 1.99e30
+    else:
+        mass = -(5 * initialLum * lum * (psi + 1) * time * mu * (lum/initialLum)**(1/psi))/(4 * Q * (lum * \
+           (lum / initialLum)**(1/psi) - initialLum))
+    return abs(mass)
 
 #=============================================================================#
 # Creation of First Star and all it's physical properties
 #=============================================================================#
 
-starZero = Star(randMass,L(0,randMass),starRadius,initialTemp)
+starZero = Star(randMass,initialLum,starRadius,initialTemp)
 starArray = []
 starArray.append(starZero)
 
@@ -441,19 +446,60 @@ time_space = np.linspace(1,8e9,N) #Time from 1 Year to 15 Billion Years
 for t in time_space:
     
     #Mass Change from temperatrure difference
-    lum = L(t,starArray[len(starArray)-1].getMass())
+    lum = L(t,randMass)
     mass = massFromLum(lum,t)
     centralDensity = densityFromK(mass)
     radiusStar = radius(centralDensity)
     centralPressure = pressure(centralDensity)
     temperature = temp(centralDensity)
     
-    newStar = Star(mass,lum,radius,temperature)
+    newStar = Star(mass,lum,radiusStar,temperature)
     starArray.append(newStar)
 
+#=============================================================================#
+# Plots
+#=============================================================================#
+
+temperatures = []
+luminosities = []
+radiuses = []
+masses = []
+for x in range(len(starArray)-1):
+    temperatures.append(starArray[x].getTemp())
+    masses.append(starArray[x].getMass())
+    luminosities.append(starArray[x].getLum())
+    radiuses.append(starArray[x].getRadius())
+
+#Temperature    
+plt.figure()
+plt.plot(time_space,temperatures)
+plt.title('Time vs. Effective Temperature')
+plt.xlabel('Time (Years)')
+plt.ylabel('Effective Temperature (K)')
+
+#Luminosity
+plt.figure()
+plt.plot(time_space,luminosities)
+plt.title('Time vs. Luminosity')
+plt.xlabel('Time (Years)')
+plt.ylabel('Luminosity (J/s)')
+
+#Radius
+plt.figure()
+plt.plot(time_space,radiuses)
+plt.title('Time vs. Radius')
+plt.xlabel('Time (Years)')
+plt.ylabel('Radius (m)')
+
+#Mass
+plt.figure()
+plt.plot(time_space,masses)
+plt.title('Time vs. Mass')
+plt.xlabel('Time (Years)')
+plt.ylabel('Mass (kg)')
 
 
-
+plt.show()
 
 
 
