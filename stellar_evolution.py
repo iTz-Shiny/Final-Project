@@ -441,7 +441,7 @@ starArray.append(starZero)
 #=============================================================================#
 
 N = 20 #Number of Time Slices
-time_space = np.linspace(1,8e9,N) #Time from 1 Year to 15 Billion Years
+time_space = np.linspace(1,8e9,N) #Time from 1 Year to 8 Billion Years
 
 for t in time_space:
     
